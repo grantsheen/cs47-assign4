@@ -5,15 +5,16 @@ import getDuration from "../utils/millisToMinuteSeconds";
 import Song from "../components/song";
 
 export default function TopTracks( {tracks} ) {
-    const renderItem = ({item, index}) => {
+    const renderItem = ({item}) => {
         return (
             <Song 
-            index = {index + 1}
             image = {item.album.images[1].url}
             title = {item.name}
             artist = {item.album.artists[0].name}
             album = {item.album.name}
             duration = {getDuration(item.duration_ms)}
+            external_url = {item.external_urls.spotify}
+            preview_url = {item.preview_url}
             />
         )
     };
@@ -48,8 +49,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10      
     },
     logo: {
-        width: 20,
-        height: 20
+        width: 16,
+        height: 16
     },
     titleStyle: {
         color: 'white',

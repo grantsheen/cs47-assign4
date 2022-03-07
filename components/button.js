@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.spotify,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        width: '60%',
+        width: '65%',
         paddingVertical: 12,
         borderRadius: 99999
     },

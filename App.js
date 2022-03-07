@@ -1,71 +1,33 @@
 import { StyleSheet, SafeAreaView } from "react-native";
-import { useState, useEffect } from "react";
-import { ResponseType, useAuthRequest } from "expo-auth-session";
-import { myTopTracks } from "./utils/apiOptions";
-import { REDIRECT_URI, SCOPES, CLIENT_ID, ALBUM_ID } from "./utils/constants";
-import Colors from "./Themes/colors"
-import Button from "./components/button"
-import SongList from "./components/songlist"
+import Colors from "./Themes/colors";
 
-// Endpoints for authorizing with Spotify
-const discovery = {
-  authorizationEndpoint: "https://accounts.spotify.com/authorize",
-  tokenEndpoint: "https://accounts.spotify.com/api/token"
-};
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import MainScreen from './screens/MainScreen';
+import DetailedSong from './screens/DetailedSong';
+import SongPreview from './screens/SongPreview';
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [token, setToken] = useState("");
-  const [tracks, setTracks] = useState([]);
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      responseType: ResponseType.Token,  
-      clientId: CLIENT_ID,
-      scopes: SCOPES,
-      // In order to follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
-      // this must be set to false
-      usePKCE: false,
-      redirectUri: REDIRECT_URI
-    },
-    discovery
-  );
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { access_token } = response.params;
-      setToken(access_token);
-    }
-  }, [response]);
-
-  useEffect(() => {
-    const fetchTracks = async () => {
-      // TODO: Comment out which one you don't want to use
-      // myTopTracks or albumTracks
-
-      const res = await myTopTracks(token);
-      // const res = await albumTracks(ALBUM_ID, token);
-      setTracks(res);
-    };
-
-    if (token) {
-      // Authenticated, make API request
-      fetchTracks();
-    }
-  }, [token]);
-
-  let contentDisplayed = null;
-  console.log(tracks);
-
-  if (token) {
-    contentDisplayed = <SongList tracks={tracks}/>
-  } else {
-    contentDisplayed = <Button promptAsync={promptAsync}/>
-  }
-
-  return (
-    <SafeAreaView style={styles.container}>
-      {contentDisplayed}
-    </SafeAreaView>
-  );
+    return(
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name='Main Screen' component={MainScreen} 
+                              options={{ headerShown: false }}/>
+                <Stack.Screen name='Song Details' component={DetailedSong} 
+                              options={{ headerStyle: {backgroundColor: 'black'},
+                                         headerTitleStyle: {color: 'white'},
+                                         title: 'Song Details',
+                                         headerBackTitle: 'Back'}}/>
+                <Stack.Screen name='Song Preview' component={SongPreview}
+                              options={{ headerStyle: {backgroundColor: 'black'},
+                                         headerTitleStyle: {color: 'white'},
+                                         title: 'Song Preview',       
+                                         headerBackTitle: 'Back'}}/>
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -76,3 +38,4 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
